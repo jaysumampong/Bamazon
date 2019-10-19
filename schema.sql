@@ -8,12 +8,12 @@ CREATE TABLE items (
     department_name VARCHAR(100) NOT NULL,
     price DECIMAL(10,2) NOT NULL,
     item_quantity INT (100) NOT NULL,
-    PRIMIMARY KEY (item_id)
+    PRIMARY KEY (item_id)
 )
 
 Select * from items;
 
-INSERT INTO item (item_name, department_name, price, stock_quantity)
+INSERT INTO items (item_name, department_name, price, item_quantity)
 VALUES ("salmon en Croute", "brunch", "15.00", "20"),
 ("asparagus & wild mushroom", "brunch", "11.00", "20"),
 ("eggs & polenta benedict", "brunch", "11.00", "15" ),
