@@ -30,3 +30,16 @@ function startPrompt() {
         }
     })
 }
+
+function menu() {
+    let query = "Select * FROM items";
+    connection.query(query, function(err, res) {
+        if (err) throw err;
+        for (let i = 0; i < res.length; i++) {
+            console.log("Item ID: " + res[i].item_id + " || Item Name: " + 
+                        res[i].item_name + " || Price: " + res[i].price);
+                        
+        }
+    })
+
+}
