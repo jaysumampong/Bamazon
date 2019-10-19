@@ -39,7 +39,7 @@ function menu() {
             console.log("Item ID: " + res[i].item_id + 
             " || Item Name: " + res[i].item_name + 
             " || Item Quantity: " + res[i].item_quantity +
-            " || Price: " + res[i].price);
+            " || Price: $" + res[i].price);
 
         }
         requestItem();
@@ -81,10 +81,10 @@ function requestItem() {
                 } else {
                     console.log("You have selected:");
                     console.log("Item:" + res[i].item_name);
-                    console.log("Price: " + res[i].price);
+                    console.log("Price: $" + res[i].price);
                     console.log("Amount available: " + purchase.itemNumber);
                     console.log("-------------------------");
-                    console.log("Total: " + res[i].price * purchase.itemNumber);
+                    console.log("Total: $" + res[i].price * purchase.itemNumber);
                     
                     let newQuantity = (res[i].item_quantity - purchase.itemNumber);
                     let receiptId = (purchase.itemId);
@@ -103,7 +103,7 @@ function finalPrompt(newQuantity,receiptId) {
         default: true
 
     }]).then(function(confirmed) {
-        if (confirmed.finalPrompt== true) {
+        if (confirmed.finalPrompt === true) {
             connection.query("UPDATE products SET ? WHERE ?", [{
                 item_quantity: newQuantity
 
@@ -111,14 +111,12 @@ function finalPrompt(newQuantity,receiptId) {
 
             }], function(err, ress) {
             });
-            console.log("Transaction complete. Thank you for shopping ForGoodnessCakes!");
+            console.log("Thank you and have a wonderful day!");
             startPrompt();
 
         } else {
-            console.log("Thank you and have a wonderful day!");
+            console.log("Transaction complete. Thank you for shopping ForGoodnessCakes! See you back soon!");
             startPrompt();
         }
     });
 }
-
-finalPrompt();
