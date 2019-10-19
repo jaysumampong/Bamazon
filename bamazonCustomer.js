@@ -9,20 +9,20 @@ let connection = mysql.createConnection({
     database: "bamazon"
 });
 
-connection.connect(function(err) {
+connection.connect(function (err) {
     if (err) throw err;
     console.log("connect id as:" + connection.threadId);
     startPrompt();
 });
 
 function startPrompt() {
-    inquirer.prompt ([{
+    inquirer.prompt([{
         type: "confirm",
         name: "confirm",
         message: "Welcome to Bamazon's bakery department ForGoodnessCakes! Would you like to browse our menu?",
         default: true
 
-    }]).then(function(user) {
+    }]).then(function (user) {
         if (user.confirm === true) {
             menu();
         } else {
@@ -33,13 +33,56 @@ function startPrompt() {
 
 function menu() {
     let query = "Select * FROM items";
-    connection.query(query, function(err, res) {
+    connection.query(query, function (err, res) {
         if (err) throw err;
         for (let i = 0; i < res.length; i++) {
-            console.log("Item ID: " + res[i].item_id + " || Item Name: " + 
-                        res[i].item_name + " || Price: " + res[i].price);
-                        
+            console.log("Item ID: " + res[i].item_id + " || Item Name: " +
+                res[i].item_name + " || Price: " + res[i].price);
+
         }
+        requestItem();
     })
 
 }
+
+function requestItem() {
+    inquirer.prompt([{
+        type: "input",
+        name: "itemId",
+        message: "Please enter item ID of the product you wish to purchase.",
+        validate: function (value) {
+            if (isNaN(value) === false) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }, {
+        type: "input",
+        name: "itemNumber",
+        message: "How many of the selected item do you wish to purchase?",
+
+    }]).then(function(purchase) {
+        connection.query("SELECT * FROM items WHERE item_id=?", purchase.itemId, function(err, res) {
+            for (let i = 0; i < res.length; i++) {
+                if (purchase.itemNumber > res[i].item_quantity) {
+                    console.log("Sorry but we do not have enough in stock available.");
+                    startPrompt();
+
+                } else {
+                    console.log("You have selected:");
+                    console.log("Item:" + res[i].item_name);
+                    console.log("Price: " + res[i].price);
+                    console.log("Amount available: " + purchase.itemNumber);
+                    console.log("-------------------------");
+                    console.log("Total: " + res[i].price * purchase.itemNumber);
+                    
+                    let newStock = (res[i].item_quantity - purchase.itemNumber);
+                    let receiptId = (purchase.itemId);
+                    confirmPurchase(newStock, receiptId);
+                }
+            }
+        });
+    });
+}
+
