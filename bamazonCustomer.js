@@ -36,8 +36,10 @@ function menu() {
     connection.query(query, function (err, res) {
         if (err) throw err;
         for (let i = 0; i < res.length; i++) {
-            console.log("Item ID: " + res[i].item_id + " || Item Name: " +
-                res[i].item_name + " || Price: " + res[i].price);
+            console.log("Item ID: " + res[i].item_id + 
+            " || Item Name: " + res[i].item_name + 
+            " || Item Quantity: " + res[i].item_quantity +
+            " || Price: " + res[i].price);
 
         }
         requestItem();
@@ -61,6 +63,13 @@ function requestItem() {
         type: "input",
         name: "itemNumber",
         message: "How many of the selected item do you wish to purchase?",
+        validate: function (value) {
+            if (isNaN(value) === false) {
+                return true;
+            } else {
+                return false;
+            }
+        }
 
     }]).then(function(purchase) {
         connection.query("SELECT * FROM items WHERE item_id=?", purchase.itemId, function(err, res) {
@@ -77,12 +86,39 @@ function requestItem() {
                     console.log("-------------------------");
                     console.log("Total: " + res[i].price * purchase.itemNumber);
                     
-                    let newStock = (res[i].item_quantity - purchase.itemNumber);
+                    let newQuantity = (res[i].item_quantity - purchase.itemNumber);
                     let receiptId = (purchase.itemId);
-                    confirmPurchase(newStock, receiptId);
+                    finalPrompt(newQuantity, receiptId);
                 }
             }
         });
     });
 }
 
+function finalPrompt(newQuantity,receiptId) {
+    inquirer.prompt([{
+        type: "confirm",
+        name: "confirmPurchase",
+        message: "Please confirm your purchase.",
+        default: true
+
+    }]).then(function(confirmed) {
+        if (confirmed.finalPrompt== true) {
+            connection.query("UPDATE products SET ? WHERE ?", [{
+                item_quantity: newQuantity
+
+            },{item_id: receiptId
+
+            }], function(err, ress) {
+            });
+            console.log("Transaction complete. Thank you for shopping ForGoodnessCakes!");
+            startPrompt();
+
+        } else {
+            console.log("Thank you and have a wonderful day!");
+            startPrompt();
+        }
+    });
+}
+
+finalPrompt();
