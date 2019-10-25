@@ -13,7 +13,7 @@ CREATE TABLE items (
 
 Select * from items;
 
-INSERT INTO items (item_name, department_name, price, item_quantity)
+INSERT INTO item (item_name, department_name, price, stock_quantity)
 VALUES ("salmon en Croute", "brunch", "15.00", "20"),
 ("asparagus & wild mushroom", "brunch", "11.00", "20"),
 ("eggs & polenta benedict", "brunch", "11.00", "15" ),
